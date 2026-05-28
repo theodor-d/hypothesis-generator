@@ -68,9 +68,12 @@ A web application that helps university students generate testable research hypo
 
 ### Home Page
 > Enter your research topic and select a difficulty level
+> <img width="1850" height="878" alt="image" src="https://github.com/user-attachments/assets/737f222b-40a3-497a-b935-5d947482f14e" />
+
 
 ### Results Page
 > View 5 generated hypotheses with difficulty badges, methodology tags, and explanations
+<img width="1830" height="874" alt="image" src="https://github.com/user-attachments/assets/21481310-5d4f-4259-8926-5db86f8e79b4" />
 
 ---
 
