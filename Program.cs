@@ -1,18 +1,14 @@
-// ============================================================
-// Program.cs — App entry point
-// This sets up the web server and registers our services
-// ============================================================
-
 using HypothesisGenerator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
-
 builder.Services.AddHttpClient();
-
-
 builder.Services.AddScoped<GeminiService>();
+
+// Fix for Railway — use the PORT environment variable
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 
