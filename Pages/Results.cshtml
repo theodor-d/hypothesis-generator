@@ -1,0 +1,118 @@
+﻿@page
+@model HypothesisGenerator.Pages.ResultsModel
+@{
+    ViewData["Title"] = "Results";
+}
+
+<!-- Header -->
+<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-stars me-2" style="color: var(--accent);"></i>
+            Generated Hypotheses
+        </h2>
+        <p class="text-secondary mb-0">
+            Topic: <span class="text-light fw-semibold">"@Model.Topic"</span>
+            &nbsp;•&nbsp;
+            Filter: <span class="text-light">@Model.DifficultyFilter</span>
+        </p>
+    </div>
+    <a href="/" class="btn btn-outline-secondary rounded-pill px-4">
+        <i class="bi bi-arrow-left me-1"></i>New Topic
+    </a>
+</div>
+
+<!-- Results count badge -->
+<p class="text-secondary mb-4">
+    <i class="bi bi-check-circle-fill me-1" style="color: #22c55e;"></i>
+    @Model.Hypotheses.Count hypothesis(es) generated
+</p>
+
+<!-- Hypothesis Cards -->
+<div class="d-flex flex-column gap-3">
+    @for (int i = 0; i < Model.Hypotheses.Count; i++)
+    {
+        var h = Model.Hypotheses[i];
+        var badgeClass = h.Difficulty?.ToLower() switch
+        {
+            "beginner" => "badge-beginner",
+            "intermediate" => "badge-intermediate",
+            "advanced" => "badge-advanced",
+            _ => "bg-secondary"
+        };
+
+        <div class="hypothesis-card p-4">
+            <div class="d-flex align-items-start gap-3">
+
+                <!-- Number bubble -->
+                <div class="hypothesis-number text-white">@(i + 1)</div>
+
+                <!-- Content -->
+                <div class="flex-grow-1">
+
+                    <!-- Statement -->
+                    <p class="fw-semibold fs-6 mb-3" style="line-height: 1.6;">
+                        @h.Statement
+                    </p>
+
+                    <!-- Tags row -->
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="badge @badgeClass rounded-pill px-3 py-1">
+                            <i class="bi bi-bar-chart-fill me-1"></i>@h.Difficulty
+                        </span>
+                        <span class="badge rounded-pill px-3 py-1"
+                              style="background-color: var(--accent-soft); color: var(--accent); border: 1px solid var(--border);">
+                            <i class="bi bi-clipboard-data me-1"></i>@h.Methodology
+                        </span>
+                    </div>
+
+                    <!-- Explanation -->
+                    <div class="d-flex align-items-start gap-2 mb-3"
+                         style="background-color: rgba(110,168,254,0.08); border-left: 3px solid var(--accent);
+                        border-radius: 4px; padding: 0.75rem 1rem;">
+                        <i class="bi bi-lightbulb-fill mt-1" style="color: #fbbf24; flex-shrink:0;"></i>
+                        <p class="text-secondary mb-0 small">@h.Explanation</p>
+                    </div>
+
+                    <!-- Regenerate this one button -->
+                    <form method="post" asp-page-handler="RegenerateOne" onsubmit="showLoading()">
+                        <input type="hidden" name="index" value="@i" />
+                        <input type="hidden" name="topic" value="@Model.Topic" />
+                        <input type="hidden" name="difficultyFilter" value="@Model.DifficultyFilter" />
+                        <input type="hidden" name="hypothesesJson"
+                               value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model.Hypotheses)" />
+                        <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Regenerate this one
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Bottom Action Row -->
+<div class="d-flex gap-3 mt-5 flex-wrap justify-content-center">
+    <form method="post" action="/" onsubmit="showLoading()" class="d-inline">
+        <input type="hidden" name="Topic" value="@Model.Topic" />
+        <input type="hidden" name="DifficultyFilter" value="@Model.DifficultyFilter" />
+        <button type="submit" class="btn btn-generate">
+            <i class="bi bi-arrow-clockwise me-2"></i>Regenerate All
+        </button>
+    </form>
+    <a href="/" class="btn btn-outline-light rounded-pill px-4">
+        <i class="bi bi-pencil-square me-2"></i>New Topic
+    </a>
+</div>
+
+<!-- Tip box -->
+<div class="card mt-4 mx-auto" style="max-width: 680px; border-color: #3a3a5c;">
+    <div class="card-body text-center py-3">
+        <p class="text-secondary small mb-0">
+            <i class="bi bi-info-circle me-1"></i>
+            <strong>Tip:</strong> Click <strong>Regenerate this one</strong> on any card to swap just that hypothesis,
+            or <strong>Regenerate All</strong> below to refresh all 5 at once.
+        </p>
+    </div>
+</div>
