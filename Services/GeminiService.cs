@@ -1,5 +1,4 @@
-﻿
-using HypothesisGenerator.Models;
+﻿using HypothesisGenerator.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -62,10 +61,16 @@ namespace HypothesisGenerator.Services
             if (string.IsNullOrEmpty(apiKey))
                 throw new InvalidOperationException("Groq API key is not set. Please add it to appsettings.json");
 
+            var languageInstruction = request.Language == "Thai"
+                ? "You must respond entirely in Thai language (ภาษาไทย). All text in the JSON must be in Thai."
+                : "Respond in English.";
+
             var prompt = $@"
 You are a research methods professor helping university students.
 
 Research Topic: ""{request.Topic}""
+
+{languageInstruction}
 
 Generate exactly 1 research hypothesis at {request.DifficultyFilter} difficulty level.
 
@@ -131,10 +136,16 @@ Return ONLY a valid JSON object, no markdown, no explanation, just raw JSON:
                 ? "Use a mix of Beginner (2), Intermediate (2), and Advanced (1) difficulty levels."
                 : $"All 5 hypotheses should be {request.DifficultyFilter} difficulty level.";
 
+            var languageInstruction = request.Language == "Thai"
+                ? "You must respond entirely in Thai language (ภาษาไทย). All text in the JSON values must be in Thai."
+                : "Respond in English.";
+
             return @"
 You are a research methods professor helping university students.
 
 Research Topic: """ + request.Topic + @"""
+
+" + languageInstruction + @"
 
 Generate exactly 5 research hypotheses.
 " + difficultyInstruction + @"

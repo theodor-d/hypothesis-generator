@@ -3,7 +3,7 @@
     public class HypothesisRequest
     {
         public string Topic { get; set; } = string.Empty;
-
         public string DifficultyFilter { get; set; } = "Mixed";
+        public string Language { get; set; } = "English";
     }
 }

@@ -4,7 +4,6 @@
     ViewData["Title"] = "Results";
 }
 
-<!-- Header -->
 <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
     <div>
         <h2 class="fw-bold mb-1">
@@ -22,13 +21,11 @@
     </a>
 </div>
 
-<!-- Results count badge -->
 <p class="text-secondary mb-4">
     <i class="bi bi-check-circle-fill me-1" style="color: #22c55e;"></i>
     @Model.Hypotheses.Count hypothesis(es) generated
 </p>
 
-<!-- Hypothesis Cards -->
 <div class="d-flex flex-column gap-3">
     @for (int i = 0; i < Model.Hypotheses.Count; i++)
     {
@@ -44,18 +41,14 @@
         <div class="hypothesis-card p-4">
             <div class="d-flex align-items-start gap-3">
 
-                <!-- Number bubble -->
                 <div class="hypothesis-number text-white">@(i + 1)</div>
 
-                <!-- Content -->
                 <div class="flex-grow-1">
 
-                    <!-- Statement -->
                     <p class="fw-semibold fs-6 mb-3" style="line-height: 1.6;">
                         @h.Statement
                     </p>
 
-                    <!-- Tags row -->
                     <div class="d-flex flex-wrap gap-2 mb-3">
                         <span class="badge @badgeClass rounded-pill px-3 py-1">
                             <i class="bi bi-bar-chart-fill me-1"></i>@h.Difficulty
@@ -66,7 +59,6 @@
                         </span>
                     </div>
 
-                    <!-- Explanation -->
                     <div class="d-flex align-items-start gap-2 mb-3"
                          style="background-color: rgba(110,168,254,0.08); border-left: 3px solid var(--accent);
                         border-radius: 4px; padding: 0.75rem 1rem;">
@@ -74,11 +66,11 @@
                         <p class="text-secondary mb-0 small">@h.Explanation</p>
                     </div>
 
-                    <!-- Regenerate this one button -->
                     <form method="post" asp-page-handler="RegenerateOne" onsubmit="showLoading()">
                         <input type="hidden" name="index" value="@i" />
                         <input type="hidden" name="topic" value="@Model.Topic" />
                         <input type="hidden" name="difficultyFilter" value="@Model.DifficultyFilter" />
+                        <input type="hidden" name="language" value="@Model.Language" />
                         <input type="hidden" name="hypothesesJson"
                                value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model.Hypotheses)" />
                         <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
@@ -92,7 +84,6 @@
     }
 </div>
 
-<!-- Bottom Action Row -->
 <div class="d-flex gap-3 mt-5 flex-wrap justify-content-center">
     <form method="post" action="/" onsubmit="showLoading()" class="d-inline">
         <input type="hidden" name="Topic" value="@Model.Topic" />
@@ -106,7 +97,6 @@
     </a>
 </div>
 
-<!-- Tip box -->
 <div class="card mt-4 mx-auto" style="max-width: 680px; border-color: #3a3a5c;">
     <div class="card-body text-center py-3">
         <p class="text-secondary small mb-0">
