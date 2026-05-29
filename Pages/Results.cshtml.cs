@@ -1,7 +1,3 @@
-// ============================================================
-// Results.cshtml.cs — Code-behind for the results page
-// ============================================================
-
 using HypothesisGenerator.Models;
 using HypothesisGenerator.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +38,6 @@ namespace HypothesisGenerator.Pages
             return Page();
         }
 
-        // Called when user clicks Regenerate on a single card
         public async Task<IActionResult> OnPostRegenerateOneAsync(
             int index,
             string topic,
@@ -52,7 +47,6 @@ namespace HypothesisGenerator.Pages
             var hypotheses = JsonConvert.DeserializeObject<List<HypothesisResult>>(hypothesesJson)
                              ?? new List<HypothesisResult>();
 
-            // Get the difficulty of the card being replaced
             var targetDifficulty = hypotheses.ElementAtOrDefault(index)?.Difficulty ?? difficultyFilter;
 
             try

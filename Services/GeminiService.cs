@@ -1,6 +1,4 @@
-﻿// ============================================================
-// GeminiService.cs — Now using Groq API
-// ============================================================
+﻿
 using HypothesisGenerator.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
