@@ -35,7 +35,7 @@ namespace HypothesisGenerator.Services
                 {
                     new List<object>
                     {
-                        DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
+                        TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Asia/Bangkok").ToString("yyyy-MM-dd HH:mm:ss"),
                         topic,
                         difficulty,
                         language
