@@ -1,8 +1,3 @@
-// ============================================================
-// Index.cshtml.cs — Code-behind for the home page
-// Handles form submission and calls GeminiService
-// ============================================================
-
 using HypothesisGenerator.Models;
 using HypothesisGenerator.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -12,44 +7,35 @@ namespace HypothesisGenerator.Pages
 {
     public class IndexModel : PageModel
     {
-        // GeminiService is injected automatically via the constructor
         private readonly GeminiService _geminiService;
+        private readonly GoogleSheetsService _sheetsService;
         private readonly ILogger<IndexModel> _logger;
 
-        // [BindProperty] means ASP.NET will automatically fill this
-        // from the form POST data (the <input name="Topic"> etc.)
         [BindProperty]
-        public HypothesisRequest Request { get; set; } = new();
+        public HypothesisRequest HypothesisInput { get; set; } = new();
 
-        // Error message to display on the page if something goes wrong
         public string ErrorMessage { get; set; } = string.Empty;
 
-        public IndexModel(GeminiService geminiService, ILogger<IndexModel> logger)
+        public IndexModel(GeminiService geminiService, GoogleSheetsService sheetsService, ILogger<IndexModel> logger)
         {
             _geminiService = geminiService;
+            _sheetsService = sheetsService;
             _logger = logger;
         }
 
-        // Called when the page loads normally (GET request)
-        public void OnGet()
-        {
-            // Nothing to do on first load — just show the empty form
-        }
+        public void OnGet() { }
 
-        // Called when the form is submitted (POST request)
         public async Task<IActionResult> OnPostAsync()
         {
-            // Check if the form data is valid (e.g., Topic is not empty)
             if (!ModelState.IsValid)
             {
                 ErrorMessage = "Please enter a research topic.";
-                return Page(); // Stay on the same page and show error
+                return Page();
             }
 
-            // Clean up the input: trim whitespace
-            Request.Topic = Request.Topic.Trim();
+            HypothesisInput.Topic = HypothesisInput.Topic.Trim();
 
-            if (string.IsNullOrWhiteSpace(Request.Topic))
+            if (string.IsNullOrWhiteSpace(HypothesisInput.Topic))
             {
                 ErrorMessage = "Please enter a research topic.";
                 return Page();
@@ -57,36 +43,48 @@ namespace HypothesisGenerator.Pages
 
             try
             {
-                // Call Gemini API to generate hypotheses
-                _logger.LogInformation("Generating hypotheses for topic: {Topic}", Request.Topic);
-                var results = await _geminiService.GenerateHypothesesAsync(Request);
+                _logger.LogInformation("Generating hypotheses for topic: {Topic}", HypothesisInput.Topic);
+                var results = await _geminiService.GenerateHypothesesAsync(HypothesisInput);
 
-                // Store results in TempData so the Results page can read them
-                // TempData only survives one redirect, which is exactly what we need
-                TempData["Topic"] = Request.Topic;
-                TempData["DifficultyFilter"] = Request.DifficultyFilter;
+                // Log to Google Sheets only if user accepted cookies
+                var cookieConsent = HttpContext.Request.Cookies["cookieConsent"];
+                if (cookieConsent == "accepted")
+                {
+                    try
+                    {
+                        await _sheetsService.LogSearchAsync(
+                            HypothesisInput.Topic,
+                            HypothesisInput.DifficultyFilter,
+                            HypothesisInput.Language
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to log to Google Sheets");
+                    }
+                }
+
+                TempData["Topic"] = HypothesisInput.Topic;
+                TempData["DifficultyFilter"] = HypothesisInput.DifficultyFilter;
+                TempData["Language"] = HypothesisInput.Language;
                 TempData["ResultsJson"] = Newtonsoft.Json.JsonConvert.SerializeObject(results);
 
-                // Redirect to the Results page
                 return RedirectToPage("/Results");
             }
             catch (InvalidOperationException ex)
             {
-                // This is thrown if the API key is not set
                 ErrorMessage = ex.Message;
                 _logger.LogError(ex, "API key configuration error");
                 return Page();
             }
             catch (HttpRequestException ex)
             {
-                // This is thrown if the API call fails
-                ErrorMessage = $"Could not reach Gemini API: {ex.Message}";
-                _logger.LogError(ex, "HTTP request to Gemini failed");
+                ErrorMessage = $"Could not reach Groq API: {ex.Message}";
+                _logger.LogError(ex, "HTTP request to Groq failed");
                 return Page();
             }
             catch (Exception ex)
             {
-                // Catch-all for unexpected errors
                 ErrorMessage = "Something went wrong. Please try again.";
                 _logger.LogError(ex, "Unexpected error generating hypotheses");
                 return Page();

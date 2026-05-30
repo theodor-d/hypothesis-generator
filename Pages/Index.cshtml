@@ -34,12 +34,12 @@
                     Research Topic
                 </label>
                 <textarea id="topic"
-                          name="Topic"
+                          name="HypothesisInput.Topic"
                           class="form-control"
                           rows="3"
                           placeholder="e.g. social media and sleep quality, caffeine and academic performance..."
                           maxlength="300"
-                          required>@Model.Request.Topic</textarea>
+                          required>@Model.HypothesisInput.Topic</textarea>
                 <div class="form-text text-secondary mt-1">
                     <i class="bi bi-info-circle me-1"></i>
                     Be specific! E.g., "screen time before bed and sleep quality in teenagers"
@@ -51,17 +51,17 @@
                     <i class="bi bi-bar-chart-fill me-1" style="color: var(--accent);"></i>
                     Difficulty Level
                 </label>
-                <select id="difficultyFilter" name="DifficultyFilter" class="form-select">
-                    <option value="Mixed" selected="@(Model.Request.DifficultyFilter == "Mixed")">
+                <select id="difficultyFilter" name="HypothesisInput.DifficultyFilter" class="form-select">
+                    <option value="Mixed" selected="@(Model.HypothesisInput.DifficultyFilter == "Mixed")">
                         🎯 Mixed (Recommended) — 2 Beginner, 2 Intermediate, 1 Advanced
                     </option>
-                    <option value="Beginner" selected="@(Model.Request.DifficultyFilter == "Beginner")">
+                    <option value="Beginner" selected="@(Model.HypothesisInput.DifficultyFilter == "Beginner")">
                         🟢 Beginner — Simple, straightforward hypotheses
                     </option>
-                    <option value="Intermediate" selected="@(Model.Request.DifficultyFilter == "Intermediate")">
+                    <option value="Intermediate" selected="@(Model.HypothesisInput.DifficultyFilter == "Intermediate")">
                         🟡 Intermediate — Moderate complexity
                     </option>
-                    <option value="Advanced" selected="@(Model.Request.DifficultyFilter == "Advanced")">
+                    <option value="Advanced" selected="@(Model.HypothesisInput.DifficultyFilter == "Advanced")">
                         🔴 Advanced — Complex, multi-variable hypotheses
                     </option>
                 </select>
@@ -72,11 +72,11 @@
                     <i class="bi bi-translate me-1" style="color: var(--accent);"></i>
                     Response Language
                 </label>
-                <select id="language" name="Language" class="form-select">
-                    <option value="English" selected="@(Model.Request.Language == "English")">
+                <select id="language" name="HypothesisInput.Language" class="form-select">
+                    <option value="English" selected="@(Model.HypothesisInput.Language == "English")">
                         🇬🇧 English
                     </option>
-                    <option value="Thai" selected="@(Model.Request.Language == "Thai")">
+                    <option value="Thai" selected="@(Model.HypothesisInput.Language == "Thai")">
                         🇹🇭 ภาษาไทย (Thai)
                     </option>
                 </select>
